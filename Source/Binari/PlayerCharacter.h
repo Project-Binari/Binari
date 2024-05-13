@@ -12,18 +12,60 @@ class BINARI_API APlayerCharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
 	APlayerCharacter();
 
+	void SetPower(int32 NewPower);
+
+	void SetSoulCount(int32 NewSoulCount);
+
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	void MoveForward(float Value);
+
+	void MoveRight(float Value);
+
+	void UseSkill();
+
+	void Attack();
+
+	void AttackLevel1(const TArray<AActor*>& NearbyEnemies);
+
+	void AttackLevel2(const TArray<AActor*>& NearbyEnemies);
+
+	void AttackLevel3(const TArray<AActor*>& NearbyEnemies);
+
+	TArray<AActor*> GetNearbyEnemy();
+
+	bool GetNearestEnemy(FVector& OutEnemyLocation, const TArray<AActor*>& NearbyEnemies);
+
+	void Dash();
+
+	void StunEnemy();
+
+	void Die();
+
+	float HealthPoints;
+
+	float ManaPoints;
+
+	bool IsDead() const;
+
 public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	float AttackRange;
+	float AttackDamage;
+
+	int32 Power;
+	int32 SoulCount;
+
+	float DashDistance;
+	float DashSpeed;
+	bool isDashing;
+
+	float StunRange;
+	float StunDuration;
 };

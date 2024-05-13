@@ -4,28 +4,23 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "EnemyBase.generated.h"
+#include "Bullet.generated.h"
 
 UCLASS()
-class BINARI_API AEnemyBase : public AActor
+class BINARI_API ABullet : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
-	AEnemyBase();
-
-	void Stun(float StunDuration);
+	// Sets default values for this actor's properties
+	ABullet();
 
 protected:
+	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	FTimerHandle StunTimerHandle;
-
-	bool isStunned;
-
-	void EndStun();
-
 public:	
+	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 };

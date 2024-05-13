@@ -3,25 +3,38 @@
 
 #include "EnemyBase.h"
 
-// Sets default values
 AEnemyBase::AEnemyBase()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+    isStunned = false;
 }
 
-// Called when the game starts or when spawned
 void AEnemyBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
-// Called every frame
 void AEnemyBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
+void AEnemyBase::Stun(float StunDuration)
+{
+    if (!isStunned)
+    {
+        isStunned = true;
+
+        SetActorEnableCollision(false);
+
+        GetWorldTimerManager().SetTimer(StunTimerHandle, this, &AEnemyBase::EndStun, StunDuration, false);
+    }
+}
+
+void AEnemyBase::EndStun()
+{
+    isStunned = false;
+
+    SetActorEnableCollision(true);
+}

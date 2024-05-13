@@ -14,30 +14,26 @@ class BINARI_API APlayerCharacter : public ACharacter
 public:
 	APlayerCharacter();
 
-	void SetPower(int32 NewPower);
+	void SetPower(int8 NewPower);
+	void SetSoulCount(int8 NewSoulCount);
 
-	void SetSoulCount(int32 NewSoulCount);
+	void Damage(float DamageAmount);
 
 protected:
 	virtual void BeginPlay() override;
 
 	void MoveForward(float Value);
-
 	void MoveRight(float Value);
 
-	void UseSkill();
-
 	void Attack();
-
 	void AttackLevel1(const TArray<AActor*>& NearbyEnemies);
-
 	void AttackLevel2(const TArray<AActor*>& NearbyEnemies);
-
 	void AttackLevel3(const TArray<AActor*>& NearbyEnemies);
 
 	TArray<AActor*> GetNearbyEnemy();
-
 	bool GetNearestEnemy(FVector& OutEnemyLocation, const TArray<AActor*>& NearbyEnemies);
+
+	void UseSkill();
 
 	void Dash();
 
@@ -49,18 +45,18 @@ protected:
 
 	float ManaPoints;
 
-	bool IsDead() const;
-
 public:	
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+
+private: 
 	float AttackRange;
 	float AttackDamage;
 
-	int32 Power;
-	int32 SoulCount;
+	uint8 Power;
+	uint8 SoulCount;
 
 	float DashDistance;
 	float DashSpeed;

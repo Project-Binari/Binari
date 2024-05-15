@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 
 #include "PlayerCharacter.h"
 
@@ -14,6 +12,9 @@ APlayerCharacter::APlayerCharacter()
 
     HealthPoints = 100;
     ManaPoints = 50;
+
+    Power = 0;
+    SoulCount = 0;
 
     DashDistance = 1000.0f;
     DashSpeed = 2000.0f;
@@ -35,11 +36,10 @@ void APlayerCharacter::Tick(float DeltaTime)
 
     if (isDashing)
     {
-        FVector DashDirection = GetActorForwardVector(); // Adjust if needed
+        FVector DashDirection = GetActorForwardVector();
         FVector NewLocation = GetActorLocation() + DashDirection * DashSpeed * DeltaTime;
         SetActorLocation(NewLocation);
 
-        // Check if dash distance reached
         if (FVector::Dist(GetActorLocation(), GetActorLocation() + DashDirection * DashDistance) >= DashDistance)
         {
             isDashing = false;
@@ -62,49 +62,47 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
     PlayerInputComponent->BindAction("Stun", IE_Pressed, this, &APlayerCharacter::StunEnemy);
 }
 
+#pragma region Setter
+void APlayerCharacter::SetPower(int8 NewPower)
+{
+    Power += NewPower;
+}
+
+void APlayerCharacter::SetSoulCount(int8 NewSoulCount)
+{
+    SoulCount += NewSoulCount;
+}
+#pragma endregion
+
+#pragma region Move
 void APlayerCharacter::MoveForward(float Value)
 {
-    if (!IsDead())
+    if (Controller != nullptr && Value != 0.0f)
     {
-        if (Controller != nullptr && Value != 0.0f)
-        {
-            const FRotator Rotation = Controller->GetControlRotation();
-            const FRotator YawRotation(0, Rotation.Yaw, 0);
+        const FRotator Rotation = Controller->GetControlRotation();
+        const FRotator YawRotation(0, Rotation.Yaw, 0);
 
-            const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+        const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 
-            AddMovementInput(Direction, Value);
-        }
+        AddMovementInput(Direction, Value);
     }
 }
 
 void APlayerCharacter::MoveRight(float Value)
 {
-    if (!IsDead())
+    if (Controller != nullptr && Value != 0.0f)
     {
-        if (Controller != nullptr && Value != 0.0f)
-        {
-            const FRotator Rotation = Controller->GetControlRotation();
-            const FRotator YawRotation(0, Rotation.Yaw, 0);
+        const FRotator Rotation = Controller->GetControlRotation();
+        const FRotator YawRotation(0, Rotation.Yaw, 0);
 
-            const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+        const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
-            AddMovementInput(Direction, Value);
-        }
+        AddMovementInput(Direction, Value);
     }
 }
+#pragma endregion
 
-void APlayerCharacter::UseSkill() //TODO
-{
-    if (!IsDead())
-    {
-        if (ManaPoints >= 0)
-        {
-            ManaPoints -= 0;
-        }
-    }
-}
-
+#pragma region Attack
 void APlayerCharacter::Attack()
 {
     FVector EnemyLocation;
@@ -164,7 +162,9 @@ void APlayerCharacter::AttackLevel3(const TArray<AActor*>& NearbyEnemies)
         // TODO: Implement attack logic here
     }
 }
+#pragma endregion
 
+#pragma region Get Enemy
 TArray<AActor*> APlayerCharacter::GetNearbyEnemy()
 {
     TArray<AActor*> NearbyEnemies;
@@ -208,6 +208,15 @@ bool APlayerCharacter::GetNearestEnemy(FVector& OutEnemyLocation, const TArray<A
 
     return false;
 }
+#pragma endregion
+
+void APlayerCharacter::UseSkill() //TODO
+{
+    if (ManaPoints >= 0)
+    {
+        ManaPoints -= 0;
+    }
+}
 
 void APlayerCharacter::Dash()
 {
@@ -235,12 +244,17 @@ void APlayerCharacter::StunEnemy()
     }
 }
 
+void APlayerCharacter::Damage(float DamageAmount)
+{
+    HealthPoints -= DamageAmount;
+
+    if (HealthPoints <= 0)
+    {
+        Die();
+    }
+}
+
 void APlayerCharacter::Die()
 {
     // TODO
-}
-
-bool APlayerCharacter::IsDead() const
-{
-    return HealthPoints <= 0.0f;
 }
